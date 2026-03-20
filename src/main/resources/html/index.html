@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Transaction Monitor</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <h1>Live Transaction Monitor</h1>
+    <br>
+
+    <table>
+        <tr>
+            <td><h4>Total Processed: </h4></td>
+            <td id="counter"><h4>0</h4></td>
+        </tr>
+    </table>
+
+    <form id="searchForm">
+        <label for="transaction">Find a Transaction by ID</label>
+        <input type="number" id="transaction" name="q">
+        <button id="searchBtn" type="submit" class="btn btn-primary">Search</button>
+    </form>
+    <br>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Payer</th>
+            <th>Payee</th>
+            <th>Description</th>
+            <th>Payment Method</th>
+            <th>Date</th>
+            <th>Amount (R)</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody id="transactions-table-body">
+<!--            <tr th:if="${result} != null">" >-->
+<!--                <td>${result.id}</td>-->
+<!--                <td>${result.payer}</td>-->
+<!--                <td>${result.payee}</td>-->
+<!--                <td>${result.description}</td>-->
+<!--                <td>${result.paymentMethod}</td>-->
+<!--                <td>${result.date}</td>-->
+<!--                <td>${result.amount}</td>-->
+<!--                <td>${result.status}</td>-->
+<!--            </tr>-->
+        </tbody>
+    </table>
+
+    <script src="index.js"></script>
+</body>
+</html>
