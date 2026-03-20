@@ -1,14 +1,11 @@
 let count = 0; // to increment total
-let intervalId = setInterval(simulateLiveTransactions, 10000);
+let intervalId = setInterval(simulateLiveTransactions, 2000);
 
 function simulateLiveTransactions() {
     fetch(`/live-transactions`)
-        .then(res => {
-            if (!res.ok) { throw new Error("Connection Lost") };
-            return res.json();
-        })
+        .then(res => res.json())
         .then(data => {
-            if (!data || data.length === 0){ return };
+            if (data.msg) {throw new Error(data.msg)};
 
             const tableBody = document.getElementById("transactions-table-body");
             const  total = document.getElementById("counter");
@@ -30,11 +27,10 @@ document.getElementById("searchBtn").addEventListener("click", (event) => { //ha
     const query = document.getElementById("transaction").value;
 
     fetch(`/search?q=${query}`)
-        .then(res => {
-            if (!res.ok) { throw new Error("Transaction not found!") };
-            return res.json();
-        })
+        .then(res => res.json())
         .then(data => {
+            if (data.msg) {throw new Error(data.msg)};
+
             const tableBody = document.getElementById("transactions-table-body");
             const  total = document.getElementById("counter");
             tableBody.innerHTML = "";
@@ -57,7 +53,6 @@ function displayTransaction(tx) {
     };
 
     const row = document.createElement("tr");
-    console.log("status: " + status);
     row.className = status;
     row.innerHTML = `
         <td>${tx.id}</td>

@@ -20,14 +20,11 @@ import java.util.Map;
 public class Monitor {
     private final Javalin server;
     private final String PAGES_DIR = "/html";
-    private String TRANSACTIONS_URL = "http://localhost:8081/transactions";
-    private HttpClient httpClient;
     private List<HashMap<String, Object>> transactions;
 
     public Monitor() {
 
         transactions = getTransactions();
-
         JavalinThymeleaf.init(templateEngine());
 
         this.server = Javalin.create(config -> {
@@ -36,14 +33,19 @@ public class Monitor {
                     context.render("index.html");
                 })
                 .get("/live-transactions", context -> {
-//                    if (simulateLiveTransactions() == null) {
-//                        context.status(404).json(Map.of("msg", "Connection Lost"));
+//                    if (simulateLiveTransactions() == null){
+//                        context.status(404).json(Map.of("msg", "Transactions not found"));
+//                        return;
 //                    }
                     context.json(simulateLiveTransactions());
                 })
                 .get("/search", context -> {
                     int transactionId = Integer.parseInt(context.queryParam("q"));
 
+                    if (getTransactions() == null) {
+                        context.status(404).json(Map.of("msg", "Connection Lost"));
+                        return;
+                    }
                     for (HashMap<String, Object> transaction : getTransactions()) {
 
                         if (transaction.get("id").equals(transactionId)) {
@@ -64,24 +66,35 @@ public class Monitor {
         this.server.start(port);
     }
 
+    /**
+     * Simulates live transactions.
+     * @return List<HashMap<String, Object>>
+     */
     public List<HashMap<String, Object>> simulateLiveTransactions() {
-        if (this.transactions.isEmpty()) {
-            return new ArrayList<>();
-        }
-        else if (this.transactions == null) {
+        if (this.transactions == null) {
             return null;
+        }
+        else if (this.transactions.isEmpty()) {
+            return List.of();
         }
         HashMap<String, Object> next = transactions.get(0);
         this.transactions.remove(0);
         return List.of(next);
     }
 
+    /**
+     * Executes a get request to a mocked Transactions Api.
+     * @return List<HashMap<String, Object>>
+     */
     public List<HashMap<String, Object>> getTransactions() {
-        httpClient = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
+
         try {
+            HttpClient httpClient = HttpClient.newBuilder() //*
+                    .version(HttpClient.Version.HTTP_1_1)
+                    .connectTimeout(Duration.ofSeconds(10))
+                    .build();
+
+            String TRANSACTIONS_URL = "http://localhost:8081/transactions";
             HttpRequest transactionsRequest = HttpRequest.newBuilder()
                     .uri(URI.create(TRANSACTIONS_URL)).GET().build();
 
@@ -96,6 +109,10 @@ public class Monitor {
         }
     }
 
+    /**
+     * Configures the templating engin for ThymeLeaf
+     * @return TemplateEngine
+     */
     private TemplateEngine templateEngine () {
         TemplateEngine templateEngine = new TemplateEngine();
         ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();
