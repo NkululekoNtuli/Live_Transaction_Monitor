@@ -33,10 +33,6 @@ public class Monitor {
                     context.render("index.html");
                 })
                 .get("/live-transactions", context -> {
-//                    if (simulateLiveTransactions() == null){
-//                        context.status(404).json(Map.of("msg", "Transactions not found"));
-//                        return;
-//                    }
                     context.json(simulateLiveTransactions());
                 })
                 .get("/search", context -> {
